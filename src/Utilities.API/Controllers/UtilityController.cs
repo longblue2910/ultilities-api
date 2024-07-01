@@ -22,13 +22,20 @@ public class UtilityController : ControllerBase
 
         var result = await translator.TranslateAsync(Languages.vi, Languages.en, response.VietNameseText);
         response.EnglishText = result.TranslatedText;
+
+        var resultJa = await translator.TranslateAsync(Languages.vi, Languages.ja, response.VietNameseText);
+        response.JapaneseText = resultJa.TranslatedText;
+
         return Ok(response);
     }
+
+
 }
 
 public class CurencyConverterResponse
 {
     public string VietNameseText { get; set; } 
     public string EnglishText { get; set; }
+    public string JapaneseText { get; set; }
 
 }
