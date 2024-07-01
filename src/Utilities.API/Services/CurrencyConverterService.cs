@@ -88,7 +88,7 @@ public static class CurrencyConverterService
     }
 
 
-    public static string CapitalizeFirstLetter(this string input)
+    public static string CapitalizeLetter(this string input)
     {
         if (string.IsNullOrEmpty(input))
             return input;
@@ -97,5 +97,12 @@ public static class CurrencyConverterService
         return textInfo.ToTitleCase(input);
     }
 
+    public static string CapitalizeFirstLetter(this string input)
+    {
+        if (string.IsNullOrEmpty(input))
+            return input;
+
+        return char.ToUpper(input[0]) + input.Substring(1).ToLower();
+    }
 
 }
