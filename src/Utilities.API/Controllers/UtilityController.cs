@@ -8,34 +8,69 @@ namespace Utilities.API.Controllers;
 [ApiController]
 public class UtilityController : ControllerBase
 {
-    [HttpGet]
-    public async Task<IActionResult> CurrencyConverterAsync(int number)
+    [HttpGet("covert-number-to-text/{number}")]
+    public IActionResult CurrencyConverterAsync(int number)
     {
-        CurencyConverterResponse response = new();
-
         // Origin text
-        var vnText = CurrencyConverterService.NumberToWordsVietnamese(number);
-
-        response.VietNameseText = vnText.CapitalizeFirstLetter();
-
-        var translator = new Translator();
-
-        var result = await translator.TranslateAsync(Languages.vi, Languages.en, response.VietNameseText);
-        response.EnglishText = result.TranslatedText;
-
-        var resultJa = await translator.TranslateAsync(Languages.vi, Languages.ja, response.VietNameseText);
-        response.JapaneseText = resultJa.TranslatedText;
-
-        return Ok(response);
+        string vnText = CurrencyConverterService.NumberToWordsVietnamese(number);
+        return Ok(vnText.CapitalizeFirstLetter());
     }
 
 
+    [HttpGet("languages")]
+    public IActionResult CurrencyConverterAsync()
+    {
+        List<LanguageResponse> result =
+        [
+            new LanguageResponse {Label = "Anh", Value = Languages.en},
+            new LanguageResponse {Label = "Nhật", Value = Languages.ja}
+        ];
+
+        return Ok(result);
+    }
+
+
+    [HttpPost("translate")]
+    public async Task<IActionResult> TranslateAsync(string text, Languages language)
+    {
+        //Translator
+        var translator = new Translator();
+        var result = await translator.TranslateAsync(Languages.vi, language, text);
+
+        string resultText = result.TranslatedText;
+
+        return Ok(resultText);
+    }
+
+
+    [HttpGet("covert-number-to-multi-text/{vnText}")]
+    public async Task<IActionResult> CurrencyConverterMutilTextAsync(string vnText)
+    {
+        var response = new ConvertTextResponse();
+
+        var translator = new Translator();
+
+        var result = await translator.TranslateAsync(Languages.vi, Languages.en, vnText);
+        response.EngText = result.TranslatedText;
+
+        var resultJa = await translator.TranslateAsync(Languages.vi, Languages.ja, vnText);
+        response.JaText = resultJa.TranslatedText;
+
+        // Origin text
+        return Ok(response);
+    }
 }
 
-public class CurencyConverterResponse
+public class LanguageResponse
 {
-    public string VietNameseText { get; set; } 
-    public string EnglishText { get; set; }
-    public string JapaneseText { get; set; }
+    public string Label { get; set; }
+    public Languages Value { get; set; }
+}
+
+
+public class ConvertTextResponse
+{
+    public string EngText { get; set; }
+    public string JaText { get; set; }
 
 }
