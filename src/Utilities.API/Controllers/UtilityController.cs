@@ -9,7 +9,7 @@ namespace Utilities.API.Controllers;
 public class UtilityController : ControllerBase
 {
     [HttpGet("covert-number-to-text/{number}")]
-    public IActionResult CurrencyConverterAsync(int number)
+    public IActionResult CurrencyConverterAsync(ulong number)
     {
         // Origin text
         string vnText = CurrencyConverterService.NumberToWordsVietnamese(number);
@@ -43,18 +43,18 @@ public class UtilityController : ControllerBase
     }
 
 
-    [HttpGet("covert-number-to-multi-text/{vnText}")]
-    public async Task<IActionResult> CurrencyConverterMutilTextAsync(string vnText)
+    [HttpGet("covert-number-to-multi-text/{number}")]
+    public async Task<IActionResult> CurrencyConverterMutilTextAsync(ulong number)
     {
         var response = new ConvertTextResponse();
 
         var translator = new Translator();
 
-        var result = await translator.TranslateAsync(Languages.vi, Languages.en, vnText);
-        response.EngText = result.TranslatedText;
+        string vnText = CurrencyConverterService.NumberToWordsVietnamese(number).CapitalizeFirstLetter();
+        response.ViText = vnText;
 
-        var resultJa = await translator.TranslateAsync(Languages.vi, Languages.ja, vnText);
-        response.JaText = resultJa.TranslatedText;
+        var resultJa = await translator.TranslateAsync(Languages.vi, Languages.en, vnText);
+        response.EnText = resultJa.TranslatedText;
 
         // Origin text
         return Ok(response);
@@ -70,7 +70,7 @@ public class LanguageResponse
 
 public class ConvertTextResponse
 {
-    public string EngText { get; set; }
-    public string JaText { get; set; }
+    public string ViText { get; set; }
+    public string EnText { get; set; }
 
 }

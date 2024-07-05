@@ -4,15 +4,12 @@ namespace Utilities.API.Services;
 
 public static class CurrencyConverterService
 {
-    public static string NumberToWordsVietnamese(double number)
+    public static string NumberToWordsVietnamese(ulong number)
     {
         if (number == 0)
             return "không đồng";
 
-        if (number < 0)
-            return "âm " + NumberToWordsVietnamese(Math.Abs(number));
-
-        string[] units = { "", "nghìn", "triệu", "tỷ" };
+        string[] units = { "", "nghìn", "triệu", "tỷ", "nghìn tỷ", "triệu tỷ", "tỷ tỷ" };
         string[] digits = { "không", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín" };
 
         string words = "";
@@ -20,7 +17,7 @@ public static class CurrencyConverterService
 
         while (number > 0)
         {
-            int part = (int)(number % 1000);
+            ulong part = number % 1000;
             if (part > 0)
             {
                 string partWords = ThreeDigitNumberToWords(part);
@@ -35,13 +32,50 @@ public static class CurrencyConverterService
         return words.Trim() + " đồng";
     }
 
-    public static string ThreeDigitNumberToWords(int number)
+    private static string ThreeDigitNumberToWords(ulong number)
     {
         string[] digits = { "không", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín" };
 
-        int hundred = number / 100;
-        int ten = (number % 100) / 10;
-        int unitDigit = number % 10;
+        string words = "";
+
+        if (number > 99)
+        {
+            words += digits[number / 100] + " trăm ";
+            number %= 100;
+        }
+
+        if (number > 19)
+        {
+            words += digits[number / 10] + " mươi ";
+            number %= 10;
+            if (number > 0)
+            {
+                if (number == 1)
+                    words += "mốt";
+                else if (number == 5)
+                    words += "lăm";
+                else
+                    words += digits[number];
+            }
+        }
+        else if (number > 0)
+        {
+            if (number < 10)
+                words += digits[number];
+            else if (number < 20)
+                words += "mười " + digits[number - 10];
+        }
+
+        return words.Trim();
+    }
+
+    public static string ThreeDigitNumberToWords(long number)
+    {
+        string[] digits = { "không", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín" };
+
+        long hundred = number / 100;
+        long ten = (number % 100) / 10;
+        long unitDigit = number % 10;
 
         string words = "";
 
