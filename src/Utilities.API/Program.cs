@@ -12,7 +12,7 @@ builder.Services.AddSwaggerGen();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-app.UseSwaggerAuthorized();
+//app.UseSwaggerAuthorized();
 
 app.UseSwagger();
 app.UseSwaggerUI();

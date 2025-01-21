@@ -44,16 +44,16 @@ public class UtilityController : ControllerBase
 
 
     [HttpGet("covert-number-to-multi-text/{number}")]
-    public async Task<IActionResult> CurrencyConverterMutilTextAsync(ulong number)
+    public async Task<IActionResult> CurrencyConverterMutilTextAsync(string text)
     {
         var response = new ConvertTextResponse();
 
         var translator = new Translator();
 
-        string vnText = CurrencyConverterService.NumberToWordsVietnamese(number).CapitalizeFirstLetter();
-        response.ViText = vnText;
+        //string vnText = CurrencyConverterService.NumberToWordsVietnamese(number).CapitalizeFirstLetter();
+        //response.ViText = text;
 
-        var resultJa = await translator.TranslateAsync(Languages.vi, Languages.en, vnText);
+        var resultJa = await translator.TranslateAsync(Languages.ja, Languages.en, text);
         response.EnText = resultJa.TranslatedText;
 
         // Origin text
